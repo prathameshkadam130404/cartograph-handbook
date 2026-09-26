@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cartograph: the team handbook</title>
+<meta name="description" content="What we are building, why, for whom, and how we get there. A plain-language handbook for the team.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#start" aria-label="Cartograph, back to top">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18c3-6 6-9 9-9s6 3 9 9"/><path d="M6 18c2-4 4-6 6-6s4 2 6 6"/><path d="M12 3v4M10 5h4"/></svg>
+      <span>Cartograph</span>
+    </a>
+    <nav class="chapters" aria-label="Chapters">
+      <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#maths">Why the maths</a>
+      <a href="#now">Why now</a><a href="#market">Market</a><a href="#money">Money</a>
+      <a href="#plan">Plan</a><a href="#needs">What we need</a><a href="#risks">Risks</a><a href="#words">Words</a>
+    </nav>
+    <button class="theme" id="themeBtn" type="button" aria-label="Switch light or dark theme">Theme</button>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main>
+<!-- HERO -->
+<div class="hero" id="start">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="muted small">Team handbook, working name Cartograph. Updated 26 September 2026.</p>
+      <h1>We draw a certified map of a model nobody is allowed to open.</h1>
+      <p class="lede">Banks and lenders now use AI to decide who gets a loan. Regulators say they must explain and check those decisions, even when the AI was built by someone else. We ask the AI thousands of careful questions, draw a precise map of how it behaves, and say exactly how sure we are about every part of that map.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#how">See how it works</a>
+        <button class="btn ghost" id="heroReplay" type="button">Survey again</button>
+      </div>
+    </div>
+    <div>
+      <div class="hero-map" role="img" aria-label="Animation: survey marks land on a hidden landscape and a contour map appears only where questions were asked; unsurveyed areas stay hatched.">
+        <canvas id="heroCanvas"></canvas>
+        <div class="counter" id="heroCounter">0 questions asked</div>
+      </div>
+      <div class="legend">
+        <span><i class="key probe"></i>one question to the model</span>
+        <span><i class="key land"></i>mapped behaviour (low to high approval)</span>
+        <span><i class="key hatch"></i>not yet certain, we refuse to answer here</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="one-line">
+      <div><b>What we sell</b><p>Independent, certified checks of AI decision models: explanations, stress tests and a validation report.</p></div>
+      <div><b>Who pays first</b><p>Indian banks that lend alongside NBFCs, model vendors who sell to banks, then UK and EU lenders.</p></div>
+      <div><b>What makes us different</b><p>We only need to ask questions, never to open the model, and every answer comes with a measured error.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <span class="chapno">Chapter 1</span>
+    <h2>The problem, told through one loan</h2>
+    <p class="lede">Most of the team will never see a model's code. You don't need to. Follow one application.</p>
+    <div class="story">
+      <div class="letter">
+        <div class="who">Priya applies for a ₹4 lakh personal loan on her phone</div>
+        <p>A digital lender (an NBFC) runs her details through its machine-learning model. The loan is funded jointly with a bank under a co-lending deal. The model says no.</p>
+        <p style="margin:0">Priya asks why. The bank's risk team asks a harder question: <em>how do we know this model is fair, stable and behaving as the policy says, when we didn't build it and can't see inside it?</em></p>
+      </div>
+      <ol class="chain">
+        <li><b>The model is a sealed box.</b>It belongs to the lending partner or a software vendor. The bank can send it applications and read the scores. That's all.</li>
+        <li><b>The rules say the bank is still responsible.</b>India's central bank (RBI) published draft rules in June 2026 saying banks must independently check models even when a vendor built them.</li>
+        <li><b>Today's explanation tools are not reliable enough.</b>A study of seven commercial tools found only some of them correctly identified what drove the model's decisions. Results changed with how the tool sampled.</li>
+        <li><b>Manual checks are slow and expensive.</b>US banks report paying around $75,000 or more to validate a single vendor model framework.</li>
+        <li><b>That gap is our business.</b>A fast, repeatable check that works from the outside, and states how accurate it is.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 2 HOW -->
+<section id="how">
+  <div class="wrap">
+    <span class="chapno">Chapter 2</span>
+    <h2>How the product works, in seven moves</h2>
+    <p class="lede">Scroll slowly. The picture on the side changes with each step. The landscape is a stand-in for the model: left to right is the applicant's income, bottom to top is their debt, and the colour is how likely the model is to approve.</p>
+    <div class="scrolly">
+      <div class="scene" id="scene" aria-live="polite">
+        <canvas id="sceneCanvas"></canvas>
+
+        <div class="panel on" id="p-box">
+          <svg viewBox="0 0 420 300" width="100%" style="max-width:460px" aria-label="A sealed box receives questions on the left and returns scores on the right">
+            <rect x="140" y="80" width="140" height="140" rx="6" fill="var(--ink)"/>
+            <text x="210" y="145" text-anchor="middle" fill="var(--paper)" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="17">The lender's</text>
+            <text x="210" y="166" text-anchor="middle" fill="var(--paper)" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="17">AI model</text>
+            <path d="M190 200h40" stroke="var(--flag)" stroke-width="4"/>
+            <text x="210" y="238" text-anchor="middle" fill="var(--ink-2)" font-size="12">locked: we cannot open it</text>
+            <g class="env"><rect x="10" y="135" width="40" height="28" rx="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/><path d="M10 137l20 14 20-14" fill="none" stroke="var(--ink)" stroke-width="2"/></g>
+            <g class="env b"><rect x="10" y="135" width="40" height="28" rx="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/><path d="M10 137l20 14 20-14" fill="none" stroke="var(--ink)" stroke-width="2"/></g>
+            <text x="30" y="190" text-anchor="middle" fill="var(--ink-2)" font-size="12">application in</text>
+            <g class="env c" style="transform-box:fill-box"><circle cx="300" cy="150" r="15" fill="var(--moss)"/><text x="300" y="155" text-anchor="middle" fill="var(--paper)" font-size="12" font-weight="700">0.62</text></g>
+            <text x="385" y="190" text-anchor="middle" fill="var(--ink-2)" font-size="12">score out</text>
+          </svg>
+        </div>
+
+        <div class="panel" id="p-explain">
+          <svg viewBox="0 0 440 320" width="100%" style="max-width:480px" class="bars" aria-label="Bar chart of the reasons behind Priya's rejection">
+            <text x="0" y="22" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="19" fill="var(--ink)">Why Priya was declined</text>
+            <text x="0" y="44" font-size="12.5" fill="var(--ink-2)">push towards "no" (red) or "yes" (green), in score points</text>
+            <g id="barsG" transform="translate(0,64)"></g>
+            <text x="0" y="310" font-size="12.5" fill="var(--ink-2)">Certified error on each bar: ±0.01. Checked against the model, not assumed.</text>
+          </svg>
+        </div>
+
+        <div class="panel" id="p-report">
+          <svg viewBox="0 0 400 330" width="100%" style="max-width:420px" aria-label="A validation report with a certificate stamp">
+            <rect x="70" y="10" width="260" height="310" rx="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+            <text x="92" y="44" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="16" fill="var(--ink)">Validation report</text>
+            <text x="92" y="62" font-size="11" fill="var(--ink-2)">Model: partner PL-scorer v3.2</text>
+            <g fill="var(--line)"><rect x="92" y="78" width="210" height="7"/><rect x="92" y="92" width="180" height="7"/><rect x="92" y="106" width="200" height="7"/><rect x="92" y="132" width="210" height="7"/><rect x="92" y="146" width="150" height="7"/><rect x="92" y="172" width="200" height="7"/><rect x="92" y="186" width="170" height="7"/></g>
+            <text x="92" y="218" font-size="11.5" fill="var(--ink)">Mapped area: 94% of real applications</text>
+            <text x="92" y="236" font-size="11.5" fill="var(--ink)">Worst error in mapped area: 1.8 points</text>
+            <text x="92" y="254" font-size="11.5" fill="var(--alarm)">Policy breaks found: 1 (see section 5)</text>
+            <g transform="rotate(-12 280 285)"><rect x="220" y="262" width="118" height="44" rx="5" fill="none" stroke="var(--moss)" stroke-width="3"/><text x="279" y="282" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="13" fill="var(--moss)">CERTIFIED</text><text x="279" y="298" text-anchor="middle" font-size="10" fill="var(--moss)">error bounds attached</text></g>
+          </svg>
+        </div>
+        <div class="scene-cap" id="sceneCap">A model we can only talk to from outside.</div>
+      </div>
+
+      <div class="steps" id="steps">
+        <div class="step on" data-scene="box" data-cap="A model we can only talk to from outside.">
+          <div class="n">1</div><h3>Start with a sealed box</h3>
+          <p>We connect to the customer's model the way their own app does: we send an application, we get a score back. We never see the code or the training data.</p>
+          <div class="plain"><b>Why this matters:</b> banks can give us this access without legal fights over the vendor's secrets. It is also exactly the situation the new rules describe.</div>
+        </div>
+        <div class="step" data-scene="probe" data-cap="Each cross is one question. Notice they cluster where the landscape changes fast.">
+          <div class="n">2</div><h3>Ask smart questions</h3>
+          <p>We send made-up but realistic applications. Our algorithm chooses each next question based on the answers so far, spending more questions where the model's behaviour changes quickly.</p>
+          <div class="plain"><b>Plain version:</b> like a surveyor who takes more measurements on a hillside than on a flat field.</div>
+        </div>
+        <div class="step" data-scene="map" data-cap="The map is filled in from the answers. It lets us answer new questions instantly.">
+          <div class="n">3</div><h3>Draw the map</h3>
+          <p>From those answers we build a compact mathematical copy of the model, called a surrogate. The technique is a <em>tensor train</em>, borrowed from physics, which stays small even when an application has dozens of inputs.</p>
+          <div class="plain"><b>Plain version:</b> the map is a small, fast copy of the model that we can study without bothering the real one.</div>
+        </div>
+        <div class="step" data-scene="certify" data-cap="Hatched top-right: applications that don't occur in real life, so we never answer there. Flag: a sudden cliff (a hard rule). We say so instead of guessing.">
+          <div class="n">4</div><h3>Mark where we're unsure</h3>
+          <p>We test the map against fresh questions it has never seen and measure the worst error in every region. Where evidence is thin, where applications are unrealistic, or where the model jumps suddenly, we hatch the area and refuse to answer from the map.</p>
+          <div class="plain"><b>This is the product's heart.</b> Competitors give an answer. We give an answer plus a measured "how wrong could this be".</div>
+        </div>
+        <div class="step" data-scene="explain" data-cap="Reasons for one decision, each with a checked error.">
+          <div class="n">5</div><h3>Explain any decision</h3>
+          <p>Because the map has a special structure, we can calculate exactly how much each input pushed a decision, including combinations of inputs. On the model itself this would take an impossible number of questions (Chapter 3 shows why).</p>
+          <div class="plain"><b>Who uses this:</b> the lender, to write the reasons it must give Priya, and the bank's validators, to confirm the model looks at sensible things.</div>
+        </div>
+        <div class="step" data-scene="stress" data-cap="Red marker: more debt makes approval MORE likely here. That breaks the lender's own policy.">
+          <div class="n">6</div><h3>Hunt for bad behaviour</h3>
+          <p>We search the whole map for places where the model does something it shouldn't: approval rising as debt rises, wild swings from tiny changes, unfair treatment of groups. A search method built for this map shape finds such spots far faster than trial and error.</p>
+          <div class="plain"><b>Plain version:</b> we look for potholes before a customer drives into one.</div>
+        </div>
+        <div class="step" data-scene="report" data-cap="What the customer receives.">
+          <div class="n">7</div><h3>Hand over the report</h3>
+          <p>Everything goes into a validation report written in the language of the regulator the customer answers to (RBI in India, the PRA in the UK, SR 26-2 in the US, the EU AI Act in Europe). Model vendors can also buy a certificate to show banks before a sale.</p>
+          <div class="plain"><b>What we are not:</b> we don't build loan models, we don't monitor chatbots, and we never replace the customer's model.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- 3 MATHS -->
+<section id="maths">
+  <div class="wrap">
+    <span class="chapno">Chapter 3</span>
+    <h2>Why the maths is the moat</h2>
+    <p class="lede">To fairly split credit for a decision between inputs, the textbook method compares every possible combination of inputs. The number of combinations doubles with each input. Drag the slider.</p>
+    <div class="calc">
+      <div>
+        <label for="nFeat"><b>Number of inputs the model uses</b></label>
+        <div class="slider-row"><input type="range" id="nFeat" min="5" max="60" value="20"><output id="nOut" for="nFeat">20</output></div>
+        <div class="vs">
+          <div class="row"><span class="lbl">Check every combination</span><div class="track"><div class="val bad" id="barBrute"></div></div><span class="txt" id="txtBrute"></span></div>
+          <div class="row"><span class="lbl">Our map-based method</span><div class="track"><div class="val good" id="barOurs"></div></div><span class="txt" id="txtOurs"></span></div>
+        </div>
+        <p class="small muted" style="margin-top:14px">Bars use a logarithmic scale. Assumes one millisecond per model question. "Our method" is an illustrative estimate of questions needed to build the map for a model whose behaviour is fairly smooth<span class="assume">assumption</span>. The real number is what our benchmark must measure.</p>
+      </div>
+      <div>
+        <div class="bigtime" id="bigTime"></div>
+        <p class="muted" style="margin-top:14px">Real credit models often use 50 to 300 inputs. That is why today's tools sample a few combinations and hope, and why a study found their answers depend on the sampling.</p>
+        <p class="muted">Recent research shows explanations can be computed exactly and quickly once a model is written as a tensor network. One 2026 paper reports 25 to 1,000 times speed-ups over a standard method at similar accuracy, on public test data <span class="grade">[A]</span>.</p>
+        <p class="muted"><b style="color:var(--ink)">Honest limit:</b> for tree-based models, a fast exact method already exists. Our edge is largest for neural networks, blended models and models we can only query.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 NOW -->
+<section id="now">
+  <div class="wrap">
+    <span class="chapno">Chapter 4</span>
+    <h2>Why now: the rulebooks changed</h2>
+    <p class="lede">In several major markets, regulators now expect lenders to check AI models, explain decisions, and take responsibility for vendor models. Some dates have slipped before, so we never build a plan around a single deadline.</p>
+    <div style="margin-top:20px">
+      <span class="status"><i class="dot" style="background:var(--moss)"></i>in force</span>
+      <span class="status"><i class="dot" style="background:var(--flag)"></i>draft or future date</span>
+      <span class="status"><i class="dot" style="background:var(--ink-2)"></i>guidance, not a law</span>
+    </div>
+    <div class="tl"><svg id="tlSvg" viewBox="0 70 1100 240" aria-label="Timeline of AI model rules from 2023 to 2027"></svg></div>
+    <p class="small muted">Sources: CFPB circular 2023-03; PRA SS1/23; SR 26-2 (17 April 2026); RBI draft guidance, press release 2026-2027/528 (24 June 2026); EU Regulation 2026/1744 (Digital Omnibus). Full links in Sources.</p>
+  </div>
+</section>
+
+<!-- 5 MARKET -->
+<section id="market">
+  <div class="wrap">
+    <span class="chapno">Chapter 5</span>
+    <h2>Who buys, and who else is out there</h2>
+    <p class="lede">We start in India because the new RBI draft applies there, the team is there, and costs are low. Prices are higher in the UK and EU, so we go there second, through partners.</p>
+    <div class="buyers">
+      <div><div class="rank">1</div><h3>Banks that co-lend with NBFCs</h3><p>The NBFC's model makes the first decision; the bank must check a model it can't open. That's our exact strength.</p></div>
+      <div><div class="rank">2</div><h3>Companies that sell credit models</h3><p>They pay for a certificate that makes bank due-diligence faster. A US company, ValidMind, already runs a programme like this.</p></div>
+      <div><div class="rank">3</div><h3>Digital NBFCs with their own AI</h3><p>Many of them, smaller budgets. An RBI survey found about one in five regulated entities using AI, mostly the large ones <span class="grade">[C]</span>.</p></div>
+    </div>
+
+    <div class="two" style="margin-top:56px">
+      <div>
+        <h3>Where we sit among competitors</h3>
+        <p class="muted">Hover or tab through the dots. Positions are our judgement, not measurement. If our benchmark doesn't put us top-right, the idea is wrong.</p>
+        <figure class="fig" style="margin:0">
+          <svg id="posSvg" viewBox="0 0 460 380" aria-label="Positioning map of competitors"></svg>
+          <div class="tip" id="posTip" role="tooltip"></div>
+          <figcaption>Across: works on models you can only query. Up: gives a measured error bound.</figcaption>
+        </figure>
+      </div>
+      <div>
+        <h3>The landscape in one table</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Type</th><th>Example, with evidence</th><th>Our angle</th></tr></thead>
+          <tbody>
+            <tr><td>Model-risk workflow tools</td><td>ValidMind (about $11m raised), Yields.io</td><td>Partner: they need a maths engine</td></tr>
+            <tr><td>AI monitoring and explanation</td><td>Fiddler ($93.8m raised); TruEra, bought by Snowflake in 2024</td><td>They're moving to chatbot monitoring; no error bounds</td></tr>
+            <tr><td>Lending AI vendors</td><td>Zest AI, used by nearly 300 lenders</td><td>They explain their own models; we are independent</td></tr>
+            <tr><td>Consultancies</td><td>Big Four, CRISIL</td><td>Manual work; could resell us</td></tr>
+            <tr><td>Tensor-network firms</td><td>Multiverse ($570m round, AI compression)</td><td>They shrink or replace models; we certify existing ones</td></tr>
+            <tr class="us"><td>Us</td><td>Certified checks from outside the model</td><td>Measured error on every answer</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small muted" style="margin-top:14px">Why not copy Multiverse and compress AI models? An independent 2026 study found tensor methods lost to simple rounding-based compression, and the field is dominated by giants and a company with far more money.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 MONEY -->
+<section id="money">
+  <div class="wrap">
+    <span class="chapno">Chapter 6</span>
+    <h2>How we make money</h2>
+    <p class="lede">First we sell validation jobs done with our own tool, because banks already pay for validation and it brings revenue in months. Then we turn the repeated parts into software they license.</p>
+    <div class="two">
+      <div>
+        <div class="tbl-wrap" style="margin-top:0"><table>
+          <thead><tr><th>Offer</th><th>India</th><th>UK, EU, US</th></tr></thead>
+          <tbody>
+            <tr><td>Validation of one model</td><td>₹6–20 lakh</td><td>$30–60k</td></tr>
+            <tr><td>Vendor certificate, per model per year</td><td>₹5–15 lakh</td><td>$20–40k</td></tr>
+            <tr><td>Software licence, per year</td><td>₹25–60 lakh</td><td>$80–150k</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small muted" style="margin-top:12px">All prices are guesses to test in interviews<span class="assume">assumption</span>. The anchor is the $75,000+ that US banks report paying to validate one vendor model framework <span class="grade">[B]</span>.</p>
+        <p style="margin-top:24px"><b>The rule that keeps us a product company:</b> from month 12, at least 30% of new sales must be licences or certificates, not one-off jobs. If we miss that two quarters in a row, we stop hiring validators.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:4px">Revenue scenarios, years 1 to 5</h3>
+        <div class="seg" role="group" aria-label="Choose scenario">
+          <button type="button" data-s="c" aria-pressed="false">Conservative</button>
+          <button type="button" data-s="b" aria-pressed="true">Base</button>
+          <button type="button" data-s="u" aria-pressed="false">Upside</button>
+        </div>
+        <figure class="fig" style="margin:0"><svg id="revSvg" viewBox="0 0 430 290" aria-label="Revenue scenario chart"></svg>
+        <figcaption id="revCap"></figcaption></figure>
+        <p class="small muted" style="margin-top:10px">Every number here is an assumption, not a forecast<span class="assume">assumption</span>. This is a solid, capital-efficient business, not a unicorn. The best-known pure explanation company, TruEra, was bought after about five years.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 PLAN -->
+<section id="plan">
+  <div class="wrap">
+    <span class="chapno">Chapter 7</span>
+    <h2>The plan, with gates we must pass</h2>
+    <p class="lede">Each gate has a pass test and a pre-agreed response if we fail. We decide the "what if it fails" now, so sunk costs don't decide for us later.</p>
+    <div class="gantt"><div class="gantt-inner" id="gantt"></div></div>
+
+    <div class="gates">
+      <div class="gate"><div class="when">Gate 0, week 6</div><p class="small muted" style="margin:0">Is the pain real?</p>
+        <div class="pass"><b>Pass:</b> at least 6 of 25–30 interviews describe a named model that is either not tree-based or can only be queried, plus a named budget owner.</div>
+        <div class="fail"><b>If not:</b> lead with stress-testing and reports instead of explanations, or stop.</div></div>
+      <div class="gate"><div class="when">Gate 1, month 4</div><p class="small muted" style="margin:0">Does the maths win?</p>
+        <div class="pass"><b>Pass:</b> on neural and blended models, same accuracy as the standard tool with 10× fewer questions; flags 95% of weak areas; finds 90% of planted policy breaks.</div>
+        <div class="fail"><b>If not:</b> sell stress-testing only, or stop.</div></div>
+      <div class="gate"><div class="when">Gate 2, month 12</div><p class="small muted" style="margin:0">Will people pay?</p>
+        <div class="pass"><b>Pass:</b> 2 paid jobs done, and one customer confirms in writing they used our report.</div>
+        <div class="fail"><b>If not:</b> one more 6-month cycle with a different buyer type, then reassess.</div></div>
+      <div class="gate"><div class="when">Gate 3, month 24</div><p class="small muted" style="margin:0">Is it a business?</p>
+        <div class="pass"><b>Pass:</b> 12 paying customers plus one partner deal, or about US$0.4m yearly revenue<span class="assume">assumption</span>.</div>
+        <div class="fail"><b>If not:</b> keep the team flat, seek a partner or buyer.</div></div>
+    </div>
+
+    <h3 style="margin-top:60px">The first 90 days</h3>
+    <div class="weeks">
+      <div class="wk">Week 1–2</div><div>Register the Indian private limited company and apply for DPIIT startup recognition. Set up code repository and automated tests. Build a list of 60 people to interview.</div>
+      <div class="wk">Week 1–6</div><div>Run 25–30 interviews with bank model validators, NBFC risk heads and model vendors. Ask what models they run, how they check vendor models, and what one check costs. No pitching.</div>
+      <div class="wk">Week 2–6</div><div>Build the test suite that proves our numbers are right, before building features. Every result is checked against a known correct answer.</div>
+      <div class="wk">Week 6</div><div><b>Gate 0 decision</b>, written down and shared.</div>
+      <div class="wk">Week 5–12</div><div>Build the engine and three test models on public credit data. Compare against the standard tools honestly.</div>
+      <div class="wk">Week 12–16</div><div>Publish the comparison openly with code, including where we lose. Email every interviewee the results.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 NEEDS -->
+<section id="needs">
+  <div class="wrap">
+    <span class="chapno">Chapter 8</span>
+    <h2>Everything we need</h2>
+    <p class="lede">A shared checklist. Ticks are saved in your own browser only, so use it as a personal tracker, and agree the real status in team meetings.</p>
+    <div class="meter"><div class="track"><div class="fill" id="meterFill"></div></div><span id="meterTxt">0 of 0 done</span></div>
+    <div class="checks" id="checks"></div>
+  </div>
+</section>
+
+<!-- 9 RISKS -->
+<section id="risks">
+  <div class="wrap">
+    <span class="chapno">Chapter 9</span>
+    <h2>What could go wrong</h2>
+    <p class="lede">Select a numbered dot to read the risk and our response. Top-right is where our attention goes.</p>
+    <div class="risk-grid">
+      <div class="matrix" id="matrix" aria-label="Risk matrix: likelihood against impact"></div>
+      <div>
+        <div class="rdetail" id="rdetail" aria-live="polite"></div>
+        <ul class="rlist" id="rlist"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 WORDS -->
+<section id="words">
+  <div class="wrap">
+    <span class="chapno">Chapter 10</span>
+    <h2>Words we use, in plain language</h2>
+    <dl class="gloss">
+      <dt>Model</dt><dd>A computer program that turns information about an applicant into a score or a decision.</dd>
+      <dt>Black box, query-only</dt><dd>A model we can send questions to and get answers from, but can't open.</dd>
+      <dt>Surrogate</dt><dd>Our compact copy of the model's behaviour, the "map". Fast to study, checked against the real thing.</dd>
+      <dt>Tensor train</dt><dd>The mathematical format of our map. It stays small even with many inputs, and makes exact explanations cheap.</dd>
+      <dt>Certified error</dt><dd>A measured statement of how far the map can be from the real model in each region.</dd>
+      <dt>Shapley value</dt><dd>A fair way to split credit for a decision between inputs, from game theory. The standard basis for "reason codes".</dd>
+      <dt>Model validation</dt><dd>An independent check that a model is sound, works as intended and is used correctly. Required by banking regulators.</dd>
+      <dt>NBFC</dt><dd>Non-banking financial company. An Indian lender that is not a bank, regulated by the RBI.</dd>
+      <dt>Co-lending</dt><dd>A bank and an NBFC funding the same loans together.</dd>
+      <dt>SR 26-2, SS1/23</dt><dd>The US and UK rulebooks for managing model risk at banks.</dd>
+      <dt>EU AI Act</dt><dd>Europe's AI law. Credit scoring counts as high-risk.</dd>
+      <dt>Gate</dt><dd>A planned checkpoint where we decide, using evidence, whether to continue, change, or stop.</dd>
+    </dl>
+
+    <h3 style="margin-top:46px">What we deliberately are not</h3>
+    <div class="not">
+      <div><b>Not a loan-model builder</b>We check other people's models, which keeps us independent.</div>
+      <div><b>Not chatbot monitoring</b>Crowded, and outside the US bank rulebook anyway.</div>
+      <div><b>Not AI compression</b>Dominated by giants and a very well-funded rival.</div>
+      <div><b>Not "quantum" in sales</b>That word helps with grants, but sounds like hype to bank buyers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section id="sources">
+  <div class="wrap">
+    <span class="chapno">Evidence</span>
+    <h2>Sources behind this handbook</h2>
+    <p class="muted">Grades: <span class="grade">[A]</span> research paper or regulator, <span class="grade">[B]</span> company or industry body, <span class="grade">[C]</span> third-party summary or tracker. Checked September 2026. Re-verify before acting.</p>
+    <ol class="srcs">
+      <li><span class="grade">[A]</span> RBI draft Guidance on Regulatory Principles for Model Risk Management, 2026 (24 June 2026). <a href="https://www.rbi.org.in/Scripts/bs_viewcontent.aspx?Id=5089">rbi.org.in</a>; summary: <a href="https://chambers.com/articles/rbi-s-draft-guidance-on-regulatory-principles-for-model-risk-management">Chambers</a></li>
+      <li><span class="grade">[B]</span> FinRegLab, Explainability and Fairness in Machine Learning for Credit Underwriting (2023). <a href="https://finreglab.org/wp-content/uploads/2023/12/FinRegLab_2023-12-07_Research-Report_Explainability-and-Fairness-in-Machine-Learning-for-Credit-Undewriting_Policy-Analysis.pdf">PDF</a></li>
+      <li><span class="grade">[B]</span> RMA, Cost is the biggest challenge to validate vendor models. <a href="https://www.rmahq.org/blogs/2021/cost-is-the-biggest-challenge-to-validate-vendor-models/">rmahq.org</a></li>
+      <li><span class="grade">[A]</span> Heidari, Li, Rabusseau, Tractable Shapley Values and Interactions via Tensor Networks (TN-SHAP). <a href="https://arxiv.org/abs/2510.22138">arXiv:2510.22138</a></li>
+      <li><span class="grade">[A]</span> SHAP Meets Tensor Networks. <a href="https://arxiv.org/abs/2510.21599">arXiv:2510.21599</a></li>
+      <li><span class="grade">[A]</span> Ballester-Ripoll et al., Sobol Tensor Trains for Global Sensitivity Analysis (2019). <a href="https://arxiv.org/pdf/1712.00233">arXiv:1712.00233</a></li>
+      <li><span class="grade">[A]</span> Batsheva et al., PROTES: Probabilistic Optimization with Tensor Sampling (NeurIPS 2023). <a href="https://arxiv.org/abs/2301.12162v2">arXiv:2301.12162</a></li>
+      <li><span class="grade">[A]</span> Rethinking the Role of Tensor Decompositions in Post-Training LLM Compression (2026). <a href="https://arxiv.org/html/2606.03465v1">arXiv:2606.03465</a></li>
+      <li><span class="grade">[B]</span> SR 26-2 scope, including AI. <a href="https://domino.ai/blog/what-changes-with-sr-26-2">summary</a></li>
+      <li><span class="grade">[C]</span> PRA SS1/23 and AI/ML models. <a href="https://cdn.presencis.com/regulations/pra-ss1/exemptions/">summary</a></li>
+      <li><span class="grade">[B]</span> EU Digital Omnibus: high-risk deadline 2 December 2027. <a href="https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/">Gibson Dunn</a></li>
+      <li><span class="grade">[B]</span> CFPB circular 2023-03 on adverse action reasons. <a href="https://www.cooley.com/news/insight/2023/2023-09-25-cfpb-mandates-additional-specificity-in-adverse-action-communications-based-on-ai-or-complex-credit-models">Cooley</a></li>
+      <li><span class="grade">[C]</span> Competitor funding: <a href="https://www.cbinsights.com/compare/fiddler-labs-vs-truera">Fiddler and TruEra</a>; <a href="https://neuronfeed.com/startups/validmind">ValidMind</a>; <a href="https://www.multimodal.dev/post/ai-powered-lending-platforms-for-credit-unions">Zest AI</a>; <a href="https://pathfounders.com/p/multiverse-computing-lands-570m-series-c">Multiverse</a></li>
+      <li><span class="grade">[C]</span> RBI FREE-AI survey figure (about one in five entities using AI). <a href="https://rcm.ac.in/digital-lending-india-ai-data-responsible-credit/">summary</a></li>
+      <li><span class="grade">[A]</span> Design inspiration: Scrollama scrollytelling pattern. <a href="https://github.com/russellsamora/scrollama">github.com/russellsamora/scrollama</a></li>
+    </ol>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Internal handbook. Working name, figures marked "assumption" and prices are placeholders for testing. Not legal, tax or investment advice.</div></footer>
+<script src="app.js"></script>
+</body>
+</html>
